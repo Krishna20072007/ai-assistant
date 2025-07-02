@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Assistant Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+</head>
+<body class="bg-black dark:bg-white min-h-screen min-w-screen flex items-stretch justify-stretch transition-colors duration-300">
+    <div class="flex w-full h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-black dark:bg-white border-r border-white/20 dark:border-black/20 flex flex-col p-4 transition-colors duration-300">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-xl font-bold tracking-wide text-white dark:text-black">Chats</span>
+                <button id="theme-toggle" class="p-2 rounded-lg bg-white dark:bg-black text-black dark:text-white hover:bg-neutral-200 dark:hover:bg-neutral-800 transition">
+                    <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <!-- Icon will be set by JS -->
+                    </svg>
+                </button>
+            </div>
+            <ul id="chat-list" class="flex-1 overflow-y-auto space-y-2">
+                <!-- Previous chats will be listed here -->
+            </ul>
+            <button id="new-chat" class="mt-4 w-full py-2 rounded-lg bg-white dark:bg-black text-black dark:text-white font-semibold transition">+ New Chat</button>
+        </aside>
+        <!-- Main Chat Area -->
+        <main class="flex-1 flex flex-col bg-white dark:bg-black transition-colors duration-300">
+            <div class="flex-1 flex flex-col p-6 overflow-y-auto gap-4" id="chat-messages"></div>
+            <form class="flex p-4 bg-white dark:bg-black border-t border-black/20 dark:border-white/20" id="chat-form" autocomplete="off">
+                <input type="text" class="flex-1 p-3 rounded-lg bg-white dark:bg-black text-black dark:text-white border border-black/20 dark:border-white/20 focus:outline-none" id="chat-input" placeholder="Type your message..." required autofocus>
+                <button type="submit" class="ml-4 px-6 py-3 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold transition">Send</button>
+            </form>
+        </main>
+    </div>
+    <script>
+        // --- Theme Toggle ---
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        function setTheme(dark) {
+            if (dark) {
+                html.classList.add('dark');
+                // Moon icon for dark mode
+                themeIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
+                    </svg>`;
+            } else {
+                html.classList.remove('dark');
+                // Sun icon for light mode
+                themeIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 6.66l-.71-.71M4.05 4.93l-.71-.71M12 5a7 7 0 000 14 7 7 0 000-14z" />
+                    </svg>`;
+            }
+        }
+        // Initial theme
+        let darkMode = true;
+        setTheme(darkMode);
+        themeToggle.onclick = () => {
+            darkMode = !darkMode;
+            setTheme(darkMode);
+        };
+
+        // --- Chat Logic (basic, expand as needed) ---
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatList = document.getElementById('chat-list');
+        const newChatBtn = document.getElementById('new-chat');
+
+        // Dummy chat history for demo
+        let chats = [
+            {id: 1, title: "Welcome", messages: [{role: "ai", content: "Hello, I am your AI assistant. How can I help you today?"}]}
+        ];
+        let currentChat = 0;
+
+        function renderChatList() {
+            chatList.innerHTML = '';
+            chats.forEach((chat, idx) => {
+                const li = document.createElement('li');
+                li.className = `p-3 rounded-lg cursor-pointer transition ${
+    idx === currentChat
+        ? 'bg-white dark:bg-black text-black dark:text-white'
+        : 'hover:bg-white dark:hover:bg-black text-black dark:text-white'
+}`;
+                li.textContent = chat.title || `Chat ${idx+1}`;
+                li.onclick = () => { currentChat = idx; renderMessages(); renderChatList(); };
+                chatList.appendChild(li);
+            });
+        }
+
+        function renderMessages() {
+            chatMessages.innerHTML = '';
+            chats[currentChat].messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = msg.role === 'user'
+                    ? 'self-end bg-black dark:bg-white text-white dark:text-black rounded-2xl rounded-br-md px-4 py-2 max-w-[80%]'
+                    : 'self-start bg-white dark:bg-black text-black dark:text-white rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%]';
+                div.textContent = msg.content;
+                chatMessages.appendChild(div);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function typeWriterEffect(element, text, speed = 18, done) {
+            let i = 0;
+            function type() {
+                if (i <= text.length) {
+                    element.textContent = text.slice(0, i);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (done) {
+                    done();
+                }
+            }
+            type();
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMsg = chatInput.value.trim();
+            if (!userMsg) return;
+            chats[currentChat].messages.push({role: "user", content: userMsg});
+            renderMessages();
+            chatInput.value = '';
+
+            // Show loading message
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'self-start bg-white dark:bg-black text-black dark:text-white rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%] italic opacity-70';
+            loadingMsg.textContent = 'thinking...';
+            chatMessages.appendChild(loadingMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Call your backend API
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMsg })
+                });
+                const data = await response.json();
+                const maxLength = 300; // or any length you prefer
+                const reply = data.reply.length > maxLength ? data.reply.slice(0, maxLength) + "..." : data.reply;
+                typeWriterEffect(loadingMsg, reply, 18, () => {
+                    loadingMsg.className = 'self-start bg-gray-700 text-white rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%]';
+                    chats[currentChat].messages.push({role: "ai", content: reply});
+                });
+            } catch (err) {
+                loadingMsg.textContent = "Error: Could not reach backend.";
+                loadingMsg.className = 'self-start bg-red-700 text-white rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%]';
+            }
+        });
+
+        newChatBtn.onclick = () => {
+            chats.push({id: Date.now(), title: `Chat ${chats.length+1}`, messages: [{role: "ai", content: "Hello, I am your AI assistant. How can I help you today?"}]});
+            currentChat = chats.length - 1;
+            renderChatList();
+            renderMessages();
+        };
+
+        // Initial render
+        renderChatList();
+        renderMessages();
+    </script>
+</body>
+</html>

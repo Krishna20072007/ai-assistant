@@ -1,0 +1,7 @@
+Flask
+requests
+SpeechRecognition
+pyttsx3
+pydub
+numpy
+dotenv
