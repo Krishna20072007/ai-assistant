@@ -9,7 +9,7 @@ api_key = os.getenv("GPT_API_KEY")
 gpt_client = GPTClient(api_key)
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://github.com/Krishna20072007"])
 
 print("API KEY:", os.getenv("GPT_API_KEY"))
 
