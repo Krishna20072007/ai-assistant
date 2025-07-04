@@ -155,7 +155,7 @@
                 const maxLength = 300; // or any length you prefer
                 const reply = data.reply.length > maxLength ? data.reply.slice(0, maxLength) + "..." : data.reply;
                 typeWriterEffect(loadingMsg, reply, 18, () => {
-                    loadingMsg.className = 'self-start bg-white-700 text-white rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%]';
+                    loadingMsg.className = 'self-start bg-white text-black rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%]';
                     chats[currentChat].messages.push({role: "ai", content: reply});
                 });
             } catch (err) {
