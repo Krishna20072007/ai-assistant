@@ -1,5 +1,8 @@
-flask
-flask-cors
-python-dotenv
-requests
-gunicorn
+# requirements.txt
+# List of Python packages required to run the backend server
+
+flask           # Web framework for building the API server
+flask-cors      # Extension to handle Cross-Origin Resource Sharing (CORS)
+python-dotenv   # Loads environment variables from a .env file
+requests        # For making HTTP requests to external APIs (e.g., GPT)
+gunicorn        # Production WSGI server for running Flask on cloud platforms

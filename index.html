@@ -1,46 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <title>AI Assistant Chat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS config for dark mode -->
     <script>
         tailwind.config = {
             darkMode: 'class'
         }
     </script>
+    <!-- (Include Tailwind CSS CDN or your build here) -->
 </head>
 <body class="bg-black dark:bg-white min-h-screen min-w-screen flex items-stretch justify-stretch transition-colors duration-300">
-    <div class="flex w-full h-screen overflow-hidden relative">
-        <!-- Hamburger Button (mobile only) -->
-        <button id="hamburger" class="md:hidden fixed top-4 left-4 z-30 p-2 rounded-lg bg-white dark:bg-black text-black dark:text-white shadow-lg focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </button>
-        <!-- Sidebar -->
-        <aside id="sidebar" class="transform fixed md:static top-0 left-0 z-20 w-64 h-full bg-black dark:bg-white border-r border-white/20 dark:border-black/20 flex flex-col p-4 transition-transform duration-300 -translate-x-full md:translate-x-0 md:relative md:h-auto md:w-72 md:rounded-none md:shadow-none">
+    <div class="flex w-full h-screen overflow-hidden">
+        <!-- Sidebar: Always visible, lists chats and theme toggle -->
+        <aside class="w-72 bg-black dark:bg-white border-r border-white/20 dark:border-black/20 flex flex-col p-4 transition-colors duration-300">
             <div class="flex items-center justify-between mb-6">
                 <span class="text-xl font-bold tracking-wide text-white dark:text-black">Chats</span>
+                <!-- Theme toggle button (light/dark) -->
                 <button id="theme-toggle" class="p-2 rounded-lg bg-white dark:bg-black text-black dark:text-white hover:bg-neutral-200 dark:hover:bg-neutral-800 transition">
                     <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <!-- Icon will be set by JS -->
+                        <!-- Icon set by JS -->
                     </svg>
                 </button>
             </div>
-            <ul id="chat-list" class="flex-1 overflow-y-auto space-y-2">
-                <!-- Previous chats will be listed here -->
-            </ul>
+            <!-- List of previous chats -->
+            <ul id="chat-list" class="flex-1 overflow-y-auto space-y-2"></ul>
+            <!-- Button to start a new chat -->
             <button id="new-chat" class="mt-4 w-full py-2 rounded-lg bg-white dark:bg-black text-black dark:text-white font-semibold transition">+ New Chat</button>
         </aside>
-        <!-- Overlay for mobile sidebar -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 dark:bg-white/10 z-10 hidden md:hidden"></div>
-        <!-- Main Chat Area -->
-        <main class="flex-1 flex flex-col bg-white dark:bg-black transition-colors duration-300 min-w-0">
-            <div class="flex-1 flex flex-col p-2 sm:p-4 md:p-6 overflow-y-auto gap-4" id="chat-messages"></div>
-            <form class="flex p-2 sm:p-4 bg-white dark:bg-black border-t border-black/20 dark:border-white/20" id="chat-form" autocomplete="off">
+        <!-- Main chat area: shows messages and input form -->
+        <main class="flex-1 flex flex-col bg-white dark:bg-black transition-colors duration-300">
+            <!-- Chat messages will appear here -->
+            <div class="flex-1 flex flex-col p-6 overflow-y-auto gap-4" id="chat-messages"></div>
+            <!-- Input form for sending messages -->
+            <form class="flex p-4 bg-white dark:bg-black border-t border-black/20 dark:border-white/20" id="chat-form" autocomplete="off">
                 <input type="text" class="flex-1 p-3 rounded-lg bg-white dark:bg-black text-black dark:text-white border border-black/20 dark:border-white/20 focus:outline-none" id="chat-input" placeholder="Type your message..." required autofocus>
-                <button type="submit" class="ml-2 sm:ml-4 px-4 sm:px-6 py-3 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold transition">Send</button>
+                <button type="submit" class="ml-4 px-6 py-3 rounded-lg bg-black dark:bg-white text-white dark:text-black font-semibold transition">Send</button>
             </form>
         </main>
     </div>
@@ -178,32 +172,6 @@
             renderChatList();
             renderMessages();
         };
-
-        // Hamburger menu logic
-        const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            sidebarOverlay.classList.remove('hidden');
-        }
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('hidden');
-        }
-
-        hamburger.addEventListener('click', openSidebar);
-        sidebarOverlay.addEventListener('click', closeSidebar);
-
-        // Close sidebar on desktop resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 768) closeSidebar();
-            if (window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.add('-translate-x-full');
-                document.getElementById('sidebar-overlay').classList.add('hidden');
-            }
-        });
 
         // Initial render
         renderChatList();
